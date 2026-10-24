@@ -10,9 +10,10 @@ on:
 
 jobs:
   docker:
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/docker-image.yml
-    secrets:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
 
   test:
     uses: ./.github/workflows/test.yml
