@@ -189,6 +189,31 @@ services:
     build: https://github.com/Taxel/PlexTraktSync.git#refs/pull/1892/head
 ```
 
+### Publishing Docker images with GitHub Actions
+
+The **Publish Docker image** workflow publishes to
+`ghcr.io/<owner>/<repository>` using the repository's `GITHUB_TOKEN`; no personal
+access token or registry secret is required. Forks publish to their own namespace.
+
+To publish a branch manually:
+
+1. Push the workflow changes to the repository's default branch. For a fork,
+   enable GitHub Actions if prompted.
+2. Open **Actions → Publish Docker image → Run workflow**.
+3. Select the branch containing your changes and run the workflow.
+4. After it succeeds, pull `ghcr.io/<owner>/<repository>:<branch>`, with the image
+   name in lowercase. Slashes in branch tags become hyphens; for example,
+   `fix/trakt-login` produces `:fix-trakt-login`.
+
+The workflow self-tests the image before publishing builds for `linux/amd64`,
+`linux/arm64`, and `linux/arm/v7`. Existing CI also publishes pushes to `main` and
+version tags such as `0.35.0`; pull requests build and self-test without logging
+in to the registry or publishing.
+
+The workflow requests `contents: read` and `packages: write`. Repository or
+organization policies must permit package publishing. New GHCR packages can be
+private; change the package's visibility to public if anonymous pulls are needed.
+
 ## Git: setup pre-commit
 
 For convenience this project uses [pre-commit] hooks:
