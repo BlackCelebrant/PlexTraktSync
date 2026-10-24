@@ -882,6 +882,18 @@ For systemd --user session to start without having to log in you need to enable 
 
 ## Troubleshooting
 
+### Trakt reports `invalid_grant - session not found`
+
+The saved Trakt session can no longer be refreshed. Run `plextraktsync trakt-login`
+to authorize again. Device login starts a fresh authorization without refreshing
+the old session, and replaces `.pytrakt.json` only after authorization succeeds.
+Leave the Client Secret blank if your app has none.
+
+If an older installation fails before displaying a device code, stop other
+PlexTraktSync processes, move `.pytrakt.json` out of the configuration directory
+as a backup, and run `plextraktsync trakt-login` again. In Docker, this file is
+normally `/app/config/.pytrakt.json`. Keep `.env` and `servers.yml`.
+
 ### I have duplicate or missing watched episodes
 
 Check your Plex episodes ordering compared to Trakt ordering.

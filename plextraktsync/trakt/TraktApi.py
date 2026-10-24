@@ -52,9 +52,18 @@ class TraktApi:
 
     @staticmethod
     def device_auth(client_id: str, client_secret: str | None = None):
-        trakt.core.AUTH_METHOD = trakt.core.DEVICE_AUTH
+        from trakt.api import HttpClient
+        from trakt.auth.device import DeviceAuthAdapter
 
-        return trakt.init(client_id=client_id, client_secret=client_secret, store=True)
+        config = trakt.core.config()
+        config.CLIENT_ID = client_id
+        config.CLIENT_SECRET = client_secret
+
+        # Device login must not load or refresh credentials from an old session.
+        # PyTrakt's device endpoints start with "/", unlike its regular API paths.
+        client = HttpClient(trakt.core.BASE_URL.rstrip("/"), trakt.core.session)
+        DeviceAuthAdapter(client=client, config=config).authenticate()
+        config.store()
 
     @cached_property
     @rate_limit()
